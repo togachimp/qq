@@ -28,7 +28,7 @@ public class ShokenInputFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment   aa
         return inflater.inflate(R.layout.shoken_input, container, false);
     }
 
