@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context="com.tjj.qq.RequestListActivity">
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/request_list_toolbar"
         android:title="搬送リクエスト"
         android:layout_width="match_parent"
         android:layout_height="52dp"
