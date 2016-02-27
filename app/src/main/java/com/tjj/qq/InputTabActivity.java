@@ -62,7 +62,18 @@ public class InputTabActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        
+        findViewById(R.id.input_sending_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+                sendReportToCenter();
+            }
+        });
 
+    }
+
+    private void sendReportToCenter() {
     }
 
 

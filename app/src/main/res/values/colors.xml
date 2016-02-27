@@ -10,4 +10,6 @@
     <color name="natural_3">#cfcabf</color>
     <color name="natural_4">#b4aca0</color>
     <color name="natural_5">#443311</color>
+    <color name="action_color">#dc3c36</color>
+    <color name="action_color_sub">#eb7766</color>
 </resources>
