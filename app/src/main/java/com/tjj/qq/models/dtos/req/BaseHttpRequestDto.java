@@ -2,7 +2,7 @@ package com.tjj.qq.models.dtos.req;
 
 import android.graphics.Bitmap;
 
-import com.example.tunnel_togashi.togashiremover.utils.URLEnc;
+import com.tjj.qq.utils.URLEnc;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;

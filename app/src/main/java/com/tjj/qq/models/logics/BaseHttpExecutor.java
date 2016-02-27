@@ -3,6 +3,7 @@ package com.tjj.qq.models.logics;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -38,6 +39,7 @@ public class BaseHttpExecutor<Req extends BaseHttpRequestDto, Res extends BaseHt
 
 
     private RequestQueue requestQueue;
+    private boolean useMockData = false;
 
     private OnRequestFinishListener<Res> onRequestFinishListener;
     private OnNetworkErrorListener onNetworkErrorListener;
@@ -60,7 +62,73 @@ public class BaseHttpExecutor<Req extends BaseHttpRequestDto, Res extends BaseHt
         this.onRequestFinishListener = onRequestFinishListener;
     }
 
-    public void execute(Req request) {
+    public void setUseMockData(boolean useMockData) {
+        this.useMockData = useMockData;
+    }
+
+    public void execute(final Req request) {
+        if (useMockData) {
+
+            new AsyncTask<Void, Void, Object>() {
+
+                @Override
+                protected Object doInBackground(Void... params) {
+
+                    try {
+                        HttpResponseContainer<Res> container = new HttpResponseContainer<>();
+                        int statusCode = 200;
+                        container.setStatusCode(statusCode);
+                        String responseString = getMockJasonString(request);
+                        Class clazz = this.getClass();
+
+                        ParameterizedType genericSuperClass = (ParameterizedType) clazz.getGenericSuperclass();
+                        Type[] actualTypeArguments = genericSuperClass.getActualTypeArguments();
+                        Class<Res> responseClass = (Class<Res>) actualTypeArguments[1];
+
+                        Gson gson = new Gson();
+
+                        JsonObject responseJson = (JsonObject) new JsonParser().parse(responseString);
+
+
+                        boolean succeeded = responseJson.get("status").getAsBoolean();
+                        container.setSucceeded(succeeded);
+
+                        if (succeeded) {
+                            JsonElement data = responseJson.get("data");
+                            Res responseDto = gson.fromJson(data, responseClass);
+                            container.setResponseDto(responseDto);
+
+                        } else {
+                            JsonElement errorJson = responseJson.get("error");
+                            HttpResponseContainer.RcError error = gson.fromJson(errorJson, HttpResponseContainer.RcError.class);
+                            container.setError(error);
+                        }
+
+                        return container;
+                    } catch (Throwable th) {
+
+                        ArrayList<Throwable> exceptionList = new ArrayList<>();
+                        exceptionList.add(th);
+                        return exceptionList;
+
+                    }
+
+                }
+
+                @Override
+                protected void onPostExecute(Object object) {
+                    if(object instanceof HttpResponseContainer){
+                        onRequestFinishListener.onRequestFinish((HttpResponseContainer<Res>) object);
+                    }else{
+                        onNetworkErrorListener.onNetworkError(null, (List<Throwable>)object);
+                    }
+                }
+            };
+
+            return;
+        }
+
+
         String url;
         int method = getMethod(request.getMethod());
 
@@ -126,6 +194,10 @@ public class BaseHttpExecutor<Req extends BaseHttpRequestDto, Res extends BaseHt
         requestQueue.add(netRequest);
 
 
+    }
+
+    protected String getMockJasonString(Req request) {
+        return null;
     }
 
 
